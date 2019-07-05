@@ -18,6 +18,8 @@ func TestParseConfig(t *testing.T) {
 	tests.AssertEqual(t, cfg.Database.Driver, "sqlite3")
 	tests.AssertEqual(t, cfg.Database.ConnString, ":memory:")
 
+	tests.AssertEqual(t, cfg.Ident.ServerName, "test")
+
 	tests.AssertEqual(t, cfg.Ident.SigningKey.Algo, "ed25519")
 	tests.AssertEqual(t, cfg.Ident.SigningKey.ID, "0")
 	tests.AssertEqual(t, cfg.Ident.SigningKey.Seed, "ahphigh9jahchiequiechee4pha1Atuv")

@@ -25,6 +25,7 @@ type DatabaseConfig struct {
 }
 
 type IdentConfig struct {
+	ServerName string           `yaml:"server_name"`
 	SigningKey SigningKeyConfig `yaml:"signing_key"`
 }
 
