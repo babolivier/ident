@@ -38,14 +38,18 @@ type SigningKeyConfig struct {
 }
 
 func NewConfig(filename string) (*Config, error) {
-	c := new(Config)
-
 	configBytes, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, errors.Wrap(err, "Couldn't open the configuration file")
 	}
 
-	if err := yaml.Unmarshal(configBytes, c); err != nil {
+	return ParseConfig(configBytes)
+}
+
+func ParseConfig(b []byte) (*Config, error) {
+	c := new(Config)
+
+	if err := yaml.Unmarshal(b, c); err != nil {
 		return nil, errors.Wrap(err, "Couldn't read the configuration file")
 	}
 
@@ -58,4 +62,5 @@ func NewConfig(filename string) (*Config, error) {
 	c.Ident.SigningKey.PubKeyBase64 = base64.RawStdEncoding.EncodeToString(c.Ident.SigningKey.PubKey)
 
 	return c, nil
+
 }

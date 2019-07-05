@@ -28,6 +28,10 @@ func NewDatabase(driver string, connString string) (*Database, error) {
 	return &Database{db, invites}, nil
 }
 
+func (d *Database) Save3PIDInvite(token, medium, address, room_id, sender, ephemeral_public_key string) error {
+	return d.invites.insertInvite(token, medium, address, room_id, sender, ephemeral_public_key)
+}
+
 func (d *Database) EphemeralPublicKeyExists(pubkey string) (bool, error) {
 	return d.invites.ephemeralPublicKeyExists(pubkey)
 }
