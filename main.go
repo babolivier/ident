@@ -6,6 +6,7 @@ import (
 
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/database"
+	"github.com/babolivier/ident/routing"
 
 	"github.com/sirupsen/logrus"
 )
@@ -26,7 +27,7 @@ func main() {
 		logrus.WithError(err).Fatal("Couldn't initiate a connection to the database")
 	}
 
-	router := NewRouter(cfg, db)
+	router := routing.NewRouter(cfg, db)
 
 	logrus.WithField("listen_addr", cfg.HTTP.ListenAddr).Info("Starting up HTTP server")
 	if err := http.ListenAndServe(cfg.HTTP.ListenAddr, router); err != nil {
