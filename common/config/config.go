@@ -13,6 +13,7 @@ type Config struct {
 	Database DatabaseConfig `yaml:"database"`
 	HTTP     HTTPConfig     `yaml:"http"`
 	Ident    IdentConfig    `yaml:"ident"`
+	Email    EmailConfig    `yaml:"email"`
 }
 
 type HTTPConfig struct {
@@ -26,7 +27,9 @@ type DatabaseConfig struct {
 
 type IdentConfig struct {
 	ServerName string           `yaml:"server_name"`
+	BaseURL    string           `yaml:"base_url"`
 	SigningKey SigningKeyConfig `yaml:"signing_key"`
+	Invites    InvitesConfig    `yaml:"invites"`
 }
 
 type SigningKeyConfig struct {
@@ -36,6 +39,28 @@ type SigningKeyConfig struct {
 	PrivKey      ed25519.PrivateKey
 	PubKey       ed25519.PublicKey
 	PubKeyBase64 string
+}
+
+type InvitesConfig struct {
+	EmailTemplate   TemplateConfig `yaml:"email_template"`
+	SubjectTemplate string         `yaml:"subject_template"`
+}
+
+type TemplateConfig struct {
+	HTML string `yaml:"html"`
+	Text string `yaml:"text"`
+}
+
+type EmailConfig struct {
+	From string     `yaml:"from"`
+	SMTP SMTPConfig `yaml:"smtp"`
+}
+
+type SMTPConfig struct {
+	Hostname string `yaml:"hostname"`
+	Port     string `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 func NewConfig(filename string) (*Config, error) {

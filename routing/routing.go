@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"github.com/babolivier/ident/invites"
 	"github.com/matrix-org/gomatrix"
 	"net/http"
 
@@ -24,6 +25,7 @@ func NewRouter(cfg *config.Config, db *database.Database) *mux.Router {
 	})).Methods(http.MethodGet)
 
 	pubkey.SetupRouting(router, cfg, db)
+	invites.SetupRouting(router, cfg, db)
 
 	router.NotFoundHandler = common.MakeAPI(func(r *http.Request) util.JSONResponse {
 		return util.JSONResponse{

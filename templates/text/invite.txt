@@ -1,0 +1,26 @@
+Hi,
+
+{{ .Sender }} has invited you into a room{{if .RoomName}} ({{.RoomName}}){{end}} on
+Matrix. To join the conversation, either pick a Matrix client from
+https://matrix.org/docs/projects/try-matrix-now.html or use the single-click
+link below to join via Riot (requires Chrome, Firefox, Safari, iOS or Android)
+
+https://riot.im/app/#/room/{{.RoomID | urlquery}}?email={{.Address | urlquery}}&signurl={{.BaseURL | printf "%s/_matrix/identity/api/v1/sign-ed25519" | urlquery}}%3Ftoken%3D{{.Token}}%26private_key%3D{{.PrivKeyBase64 | urlquery}}&room_name={{.RoomName | urlquery}}&room_avatar_url={{.RoomAvatarURL | urlquery}}&inviter_name={{.SenderDisplayName | urlquery}}
+
+
+About Matrix:
+
+Matrix.org is an open standard for interoperable, decentralised, real-time communication
+over IP, supporting group chat, file transfer, voice and video calling, integrations to
+other apps, bridges to other communication systems and much more. It can be used to power
+Instant Messaging, VoIP/WebRTC signalling, Internet of Things communication - or anywhere
+you need a standard HTTP API for publishing and subscribing to data whilst tracking the
+conversation history.
+
+Matrix defines the standard, and provides open source reference implementations of
+Matrix-compatible Servers, Clients, Client SDKs and Application Services to help you
+create new communication solutions or extend the capabilities and reach of existing ones.
+
+Thanks,
+
+Matrix
