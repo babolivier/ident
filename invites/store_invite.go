@@ -65,6 +65,9 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	defer r.Body.Close()
 
 	// Load the body's JSON into an instance of StoreInviteReq.
+	// Sydent supports both the `application/json` and `application/x-www-form-urlencoded` content-types,
+	// but that's mainly due to an implementation bug in Synapse: https://github.com/matrix-org/synapse/issues/5634
+	// Let's just follow the spec here.
 	var req StoreInviteReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return common.InternalServerError()
