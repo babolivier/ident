@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"mime/multipart"
+	"net"
 	"net/smtp"
 	"net/textproto"
 	"time"
@@ -19,11 +20,21 @@ import (
 
 func SendMail(cfg *config.Config, to, templateTXT, templateHTML string, data interface{}) (err error) {
 	// Dial the SMTP server.
-	tlsconfig := &tls.Config{ServerName: cfg.Email.SMTP.Hostname}
+	var conn net.Conn
 	addr := cfg.Email.SMTP.Hostname + ":" + cfg.Email.SMTP.Port
-	conn, err := tls.Dial("tcp", addr, tlsconfig)
-	if err != nil {
-		return errors.Wrap(err, "Couldn't dial the SMTP server")
+
+	// Dial with a TLS handshake if TLS is enabled, use a standard TCP connection otherwise.
+	if cfg.Email.SMTP.EnableTLS {
+		tlsconfig := &tls.Config{ServerName: cfg.Email.SMTP.Hostname}
+		conn, err = tls.Dial("tcp", addr, tlsconfig)
+		if err != nil {
+			return errors.Wrap(err, "Couldn't dial the SMTP server (TLS on)")
+		}
+	} else {
+		conn, err = net.Dial("tcp", addr)
+		if err != nil {
+			return errors.Wrap(err, "Couldn't dial the SMTP server (TLS off)")
+		}
 	}
 
 	// Initiate the SMTP client.

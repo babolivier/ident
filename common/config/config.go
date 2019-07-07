@@ -57,10 +57,11 @@ type EmailConfig struct {
 }
 
 type SMTPConfig struct {
-	Hostname string `yaml:"hostname"`
-	Port     string `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
+	Hostname  string `yaml:"hostname"`
+	Port      string `yaml:"port"`
+	Username  string `yaml:"username"`
+	Password  string `yaml:"password"`
+	EnableTLS bool   `yaml:"enable_tls"`
 }
 
 func NewConfig(filename string) (*Config, error) {
