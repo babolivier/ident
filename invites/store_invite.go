@@ -87,7 +87,9 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	req.Token = common.RandString(128)
 
 	// Send the invite email.
-	if err = email.SendMail(cfg, req.Address, "templates/text/invite.txt", "", &req); err != nil {
+	if err = email.SendMail(
+		cfg, req.Address, cfg.Ident.Invites.EmailTemplate.Text, cfg.Ident.Invites.EmailTemplate.HTML, &req,
+	); err != nil {
 		// Log the error as the mail sending process is a bit more complex.
 		logrus.WithError(err).Error("Couldn't send 3PID invite email")
 		return common.InternalServerError()
