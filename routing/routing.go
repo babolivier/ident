@@ -1,16 +1,16 @@
 package routing
 
 import (
-	"github.com/babolivier/ident/invites"
-	"github.com/matrix-org/gomatrix"
 	"net/http"
 
 	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/database"
+	"github.com/babolivier/ident/invites"
 	"github.com/babolivier/ident/pubkey"
 
 	"github.com/gorilla/mux"
+	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/util"
 )
 

@@ -1,14 +1,14 @@
 package pubkey
 
 import (
-	"github.com/babolivier/ident/common/database"
-	"github.com/sirupsen/logrus"
 	"strings"
 
 	"github.com/babolivier/ident/common/config"
+	"github.com/babolivier/ident/common/database"
 
 	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/util"
+	"github.com/sirupsen/logrus"
 )
 
 type PublicKeyResponse struct {

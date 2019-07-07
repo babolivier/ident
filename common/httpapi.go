@@ -1,9 +1,9 @@
 package common
 
 import (
-	"github.com/matrix-org/gomatrix"
 	"net/http"
 
+	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/util"
 )
 

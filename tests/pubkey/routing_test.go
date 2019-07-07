@@ -2,8 +2,6 @@ package pubkey
 
 import (
 	"encoding/json"
-	"github.com/babolivier/ident/pubkey"
-	"github.com/babolivier/ident/tests"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -12,6 +10,8 @@ import (
 
 	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
+	"github.com/babolivier/ident/pubkey"
+	"github.com/babolivier/ident/tests"
 )
 
 func TestGetPubKey(t *testing.T) {

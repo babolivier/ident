@@ -1,13 +1,15 @@
 package tests
 
 import (
-	"github.com/babolivier/ident/common"
-	"github.com/babolivier/ident/common/config"
-	"github.com/babolivier/ident/common/database"
-	"github.com/gorilla/mux"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/babolivier/ident/common"
+	"github.com/babolivier/ident/common/config"
+	"github.com/babolivier/ident/common/database"
+
+	"github.com/gorilla/mux"
 )
 
 var ConfigYAML = `

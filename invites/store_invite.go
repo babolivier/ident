@@ -4,8 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/babolivier/ident/common/email"
-	"github.com/sirupsen/logrus"
 	"math/rand"
 	"net/http"
 	"path"
@@ -15,10 +13,12 @@ import (
 	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/database"
+	"github.com/babolivier/ident/common/email"
 
 	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/gomatrixserverlib"
 	"github.com/matrix-org/util"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ed25519"
 )
 

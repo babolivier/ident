@@ -2,9 +2,10 @@ package config
 
 import (
 	"encoding/base64"
+	"testing"
+
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/tests"
-	"testing"
 
 	"golang.org/x/crypto/ed25519"
 )

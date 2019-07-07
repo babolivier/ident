@@ -1,13 +1,13 @@
 package pubkey
 
 import (
-	"github.com/babolivier/ident/pubkey"
-	"github.com/babolivier/ident/tests"
 	"net/http"
 	"testing"
 
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/database"
+	"github.com/babolivier/ident/pubkey"
+	"github.com/babolivier/ident/tests"
 )
 
 func TestGetKey(t *testing.T) {
