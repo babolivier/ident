@@ -52,14 +52,14 @@ func testIsPubKeyValid(t *testing.T, b64 string, cfg *config.Config, expected bo
 func TestIsEphemeralPubKeyValid(t *testing.T) {
 	cfg := testutils.NewTestConfig()
 	db, err := database.NewDatabase(cfg.Database.Driver, cfg.Database.ConnString)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	realPubKey := "somekey"
 	err = db.Save3PIDInvite(
 		"token", "email", "test@example.com", "!room:example.com",
 		"@alice:example.com", realPubKey,
 	)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	testIsEphemeralPubKeyValid(t, realPubKey, db, true)
 	testIsEphemeralPubKeyValid(t, "abcdef", db, false)

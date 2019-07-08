@@ -17,7 +17,7 @@ import (
 
 func TestGetPubKey(t *testing.T) {
 	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	defer s.Close()
 
@@ -31,7 +31,7 @@ func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, ex
 	u := serverURL + path.Join(constants.APIPrefix, "pubkey", keyID)
 
 	resp, err := http.Get(u)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 	require.Equal(t, expectedCode, resp.StatusCode)
 
 	if resp.StatusCode == http.StatusOK {
@@ -40,11 +40,11 @@ func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, ex
 		defer resp.Body.Close()
 
 		b, err := ioutil.ReadAll(resp.Body)
-		require.Nil(t, err)
+		require.Nil(t, err, err)
 
 		var pubKeyResp PublicKeyResponse
 		err = json.Unmarshal(b, &pubKeyResp)
-		require.Nil(t, err)
+		require.Nil(t, err, err)
 
 		require.Equal(t, cfg.Ident.SigningKey.PubKeyBase64, pubKeyResp.PublicKey)
 	}
@@ -52,7 +52,7 @@ func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, ex
 
 func TestPubKeyIsValid(t *testing.T) {
 	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	defer s.Close()
 
@@ -63,7 +63,7 @@ func TestPubKeyIsValid(t *testing.T) {
 
 func TestPubKeyEphemeralIsValid(t *testing.T) {
 	_, db, s, err := testutils.InitTestRouting(SetupRouting)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	defer s.Close()
 
@@ -72,7 +72,7 @@ func TestPubKeyEphemeralIsValid(t *testing.T) {
 		"token", "email", "test@example.com", "!room:example.com",
 		"@alice:example.com", realPubKey,
 	)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	testPubKeyIsValid(t, s.URL, realPubKey, true, true)
 	testPubKeyIsValid(t, s.URL, "abcdef", true, false)
@@ -87,7 +87,7 @@ func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected 
 	}
 
 	u, err := url.Parse(serverURL + path.Join(constants.APIPrefix, route))
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	query := u.Query()
 	query.Add("public_key", b64)
@@ -95,17 +95,17 @@ func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected 
 	u.RawQuery = query.Encode()
 
 	resp, err := http.Get(u.String())
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 
 	defer resp.Body.Close()
 
 	b, err := ioutil.ReadAll(resp.Body)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	var pubKeyValidResp PublicKeyValidResponse
 	err = json.Unmarshal(b, &pubKeyValidResp)
-	require.Nil(t, err)
+	require.Nil(t, err, err)
 
 	require.Equal(t, expected, pubKeyValidResp.Valid)
 }

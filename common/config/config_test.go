@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/base64"
+	"strings"
 	"testing"
 
 	"github.com/babolivier/ident/common/constants"
@@ -13,7 +14,7 @@ import (
 func TestParseConfig(t *testing.T) {
 	cfg, err := ParseConfig([]byte(constants.TestConfigYAML))
 
-	require.Equal(t, err, nil)
+	require.Nil(t, err, err)
 
 	require.Equal(t, "127.0.0.1:9999", cfg.HTTP.ListenAddr)
 
@@ -45,4 +46,26 @@ func TestParseConfig(t *testing.T) {
 	require.Equal(t, "ident@example.com", cfg.Email.SMTP.Username)
 	require.Equal(t, "somepassword", cfg.Email.SMTP.Password)
 	require.True(t, cfg.Email.SMTP.EnableTLS)
+}
+
+func TestParseConfigInvalidYAML(t *testing.T) {
+	yaml := "something: something_else: invalid_value" +
+		"ident:\n" +
+		"  signing_key:" +
+		"    algo: unsupported_algo"
+
+	_, err := ParseConfig([]byte(yaml))
+	require.NotNil(t, err)
+	require.True(t, strings.HasPrefix(err.Error(), "Couldn't read the configuration file"), err.Error())
+}
+
+func TestParseConfigInvalidKeyAlgo(t *testing.T) {
+	yaml := "" +
+		"ident:\n" +
+		"  signing_key:\n" +
+		"    algo: unsupported_algo"
+
+	_, err := ParseConfig([]byte(yaml))
+	require.NotNil(t, err)
+	require.True(t, strings.HasPrefix(err.Error(), "Invalid signing key configuration"), err)
 }
