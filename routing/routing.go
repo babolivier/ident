@@ -5,6 +5,7 @@ import (
 
 	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
+	"github.com/babolivier/ident/common/constants"
 	"github.com/babolivier/ident/common/database"
 	"github.com/babolivier/ident/invites"
 	"github.com/babolivier/ident/pubkey"
@@ -16,7 +17,7 @@ import (
 
 func NewRouter(cfg *config.Config, db *database.Database) *mux.Router {
 	// Create the router and register the handler for the status check route.
-	router := mux.NewRouter().UseEncodedPath().PathPrefix(common.APIPrefix).Subrouter()
+	router := mux.NewRouter().UseEncodedPath().PathPrefix(constants.APIPrefix).Subrouter()
 	router.Handle("", common.MakeAPI(func(r *http.Request) util.JSONResponse {
 		return util.JSONResponse{
 			Code: 200,

@@ -8,15 +8,16 @@ import (
 	"path"
 	"testing"
 
-	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
-	"github.com/babolivier/ident/pubkey"
-	"github.com/babolivier/ident/tests"
+	"github.com/babolivier/ident/common/constants"
+	"github.com/babolivier/ident/common/testutils"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetPubKey(t *testing.T) {
-	cfg, _, s, err := tests.InitTestRouting(pubkey.SetupRouting)
-	tests.AssertEqual(t, err, nil)
+	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
+	require.Equal(t, err, nil)
 
 	defer s.Close()
 
@@ -27,29 +28,29 @@ func TestGetPubKey(t *testing.T) {
 }
 
 func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, expectedCode int) {
-	url := serverURL + path.Join(common.APIPrefix, "pubkey", keyID)
+	url := serverURL + path.Join(constants.APIPrefix, "pubkey", keyID)
 
 	resp, err := http.Get(url)
-	tests.AssertEqual(t, err, nil)
-	tests.AssertEqual(t, resp.StatusCode, expectedCode)
+	require.Equal(t, err, nil)
+	require.Equal(t, resp.StatusCode, expectedCode)
 
 	if resp.StatusCode == http.StatusOK && resp.Body != nil {
 		defer resp.Body.Close()
 
 		b, err := ioutil.ReadAll(resp.Body)
-		tests.AssertEqual(t, err, nil)
+		require.Equal(t, err, nil)
 
-		var pubKeyResp pubkey.PublicKeyResponse
+		var pubKeyResp PublicKeyResponse
 		err = json.Unmarshal(b, &pubKeyResp)
-		tests.AssertEqual(t, err, nil)
+		require.Equal(t, err, nil)
 
-		tests.AssertEqual(t, pubKeyResp.PublicKey, cfg.Ident.SigningKey.PubKeyBase64)
+		require.Equal(t, pubKeyResp.PublicKey, cfg.Ident.SigningKey.PubKeyBase64)
 	}
 }
 
 func TestPubKeyIsValid(t *testing.T) {
-	cfg, _, s, err := tests.InitTestRouting(pubkey.SetupRouting)
-	tests.AssertEqual(t, err, nil)
+	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
+	require.Equal(t, err, nil)
 
 	defer s.Close()
 
@@ -59,8 +60,8 @@ func TestPubKeyIsValid(t *testing.T) {
 }
 
 func TestPubKeyEphemeralIsValid(t *testing.T) {
-	_, db, s, err := tests.InitTestRouting(pubkey.SetupRouting)
-	tests.AssertEqual(t, err, nil)
+	_, db, s, err := testutils.InitTestRouting(SetupRouting)
+	require.Equal(t, err, nil)
 
 	defer s.Close()
 
@@ -69,7 +70,7 @@ func TestPubKeyEphemeralIsValid(t *testing.T) {
 		"token", "email", "test@example.com", "!room:example.com",
 		"@alice:example.com", realPubKey,
 	)
-	tests.AssertEqual(t, err, nil)
+	require.Equal(t, err, nil)
 
 	testPubKeyIsValid(t, s.URL, realPubKey, true, true)
 	testPubKeyIsValid(t, s.URL, "abcdef", true, false)
@@ -83,8 +84,8 @@ func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected 
 		route = "pubkey/isvalid"
 	}
 
-	u, err := url.Parse(serverURL + path.Join(common.APIPrefix, route))
-	tests.AssertEqual(t, err, nil)
+	u, err := url.Parse(serverURL + path.Join(constants.APIPrefix, route))
+	require.Equal(t, err, nil)
 
 	query := u.Query()
 	query.Add("public_key", b64)
@@ -92,17 +93,17 @@ func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected 
 	u.RawQuery = query.Encode()
 
 	resp, err := http.Get(u.String())
-	tests.AssertEqual(t, err, nil)
-	tests.AssertEqual(t, resp.StatusCode, http.StatusOK)
+	require.Equal(t, err, nil)
+	require.Equal(t, resp.StatusCode, http.StatusOK)
 
 	defer resp.Body.Close()
 
 	b, err := ioutil.ReadAll(resp.Body)
-	tests.AssertEqual(t, err, nil)
+	require.Equal(t, err, nil)
 
-	var pubKeyValidResp pubkey.PublicKeyValidResponse
+	var pubKeyValidResp PublicKeyValidResponse
 	err = json.Unmarshal(b, &pubKeyValidResp)
-	tests.AssertEqual(t, err, nil)
+	require.Equal(t, err, nil)
 
-	tests.AssertEqual(t, pubKeyValidResp.Valid, expected)
+	require.Equal(t, pubKeyValidResp.Valid, expected)
 }

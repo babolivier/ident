@@ -12,6 +12,7 @@ import (
 
 	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
+	"github.com/babolivier/ident/common/constants"
 	"github.com/babolivier/ident/common/database"
 	"github.com/babolivier/ident/common/email"
 
@@ -116,7 +117,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 func checkReq(req *StoreInviteReq) (resp *util.JSONResponse) {
 	// Check if we support this medium.
 	// TODO: Implement MSISDN.
-	if req.Medium != common.MediumEmail {
+	if req.Medium != constants.MediumEmail {
 		return &util.JSONResponse{
 			Code: 400,
 			JSON: gomatrix.RespError{
@@ -127,7 +128,7 @@ func checkReq(req *StoreInviteReq) (resp *util.JSONResponse) {
 	}
 
 	// Check if the email address is valid.
-	if req.Medium == common.MediumEmail && !isEmailAddressValid(req.Address) {
+	if req.Medium == constants.MediumEmail && !isEmailAddressValid(req.Address) {
 		return &util.JSONResponse{
 			Code: 400,
 			JSON: gomatrix.RespError{
@@ -183,11 +184,11 @@ func getResp(req *StoreInviteReq, cfg *config.Config, pubKeyBase64 string) *Stor
 	// Add the public key's details.
 	resp.PublicKeys[0] = PublicKey{
 		PublicKey:      cfg.Ident.SigningKey.PubKeyBase64,
-		KeyValidityURL: cfg.Ident.BaseURL + path.Join(common.APIPrefix, "pubkey/isvalid"),
+		KeyValidityURL: cfg.Ident.BaseURL + path.Join(constants.APIPrefix, "pubkey/isvalid"),
 	}
 	resp.PublicKeys[1] = PublicKey{
 		PublicKey:      pubKeyBase64,
-		KeyValidityURL: cfg.Ident.BaseURL + path.Join(common.APIPrefix, "pubkey/ephemeral/isvalid"),
+		KeyValidityURL: cfg.Ident.BaseURL + path.Join(constants.APIPrefix, "pubkey/ephemeral/isvalid"),
 	}
 
 	return &resp

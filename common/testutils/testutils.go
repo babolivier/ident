@@ -1,12 +1,10 @@
-package tests
+package testutils
 
 import (
 	"net/http/httptest"
-	"reflect"
-	"testing"
 
-	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
+	"github.com/babolivier/ident/common/constants"
 	"github.com/babolivier/ident/common/database"
 
 	"github.com/gorilla/mux"
@@ -69,14 +67,8 @@ func NewTestServer(
 	setupRouting func(*mux.Router, *config.Config, *database.Database),
 ) *httptest.Server {
 	// Create the router and register the handler for the status check route.
-	router := mux.NewRouter().UseEncodedPath().PathPrefix(common.APIPrefix).Subrouter()
+	router := mux.NewRouter().UseEncodedPath().PathPrefix(constants.APIPrefix).Subrouter()
 	setupRouting(router, cfg, db)
 
 	return httptest.NewServer(router)
-}
-
-func AssertEqual(t *testing.T, a, b interface{}) {
-	if !reflect.DeepEqual(a, b) {
-		t.Fatalf("Assertion failed: %v != %v", a, b)
-	}
 }
