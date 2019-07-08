@@ -12,8 +12,7 @@ import (
 )
 
 func TestGetKey(t *testing.T) {
-	cfg, err := testutils.NewTestConfig()
-	require.Nil(t, err)
+	cfg := testutils.NewTestConfig()
 
 	realKeyID := cfg.Ident.SigningKey.Algo + ":" + cfg.Ident.SigningKey.ID
 	testGetKey(t, realKeyID, cfg, http.StatusOK)
@@ -34,8 +33,7 @@ func testGetKey(t *testing.T, keyID string, cfg *config.Config, expectedCode int
 }
 
 func TestIsPubKeyValid(t *testing.T) {
-	cfg, err := testutils.NewTestConfig()
-	require.Nil(t, err)
+	cfg := testutils.NewTestConfig()
 
 	testIsPubKeyValid(t, cfg.Ident.SigningKey.PubKeyBase64, cfg, true)
 	testIsPubKeyValid(t, "abcdef", cfg, false)
@@ -52,10 +50,9 @@ func testIsPubKeyValid(t *testing.T, b64 string, cfg *config.Config, expected bo
 }
 
 func TestIsEphemeralPubKeyValid(t *testing.T) {
-	cfg, err := testutils.NewTestConfig()
-	require.Equal(t, err, nil)
+	cfg := testutils.NewTestConfig()
 	db, err := database.NewDatabase(cfg.Database.Driver, cfg.Database.ConnString)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	realPubKey := "somekey"
 	err = db.Save3PIDInvite(

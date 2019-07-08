@@ -10,17 +10,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewTestConfig() (*config.Config, error) {
-	return config.ParseConfig([]byte(constants.TestConfigYAML))
+func NewTestConfig() *config.Config {
+	c, err := config.ParseConfig([]byte(constants.TestConfigYAML))
+	if err != nil {
+		panic(err)
+	}
+
+	return c
 }
 
 func InitTestRouting(
 	setupRouting func(*mux.Router, *config.Config, *database.Database),
 ) (cfg *config.Config, db *database.Database, s *httptest.Server, err error) {
-	cfg, err = NewTestConfig()
-	if err != nil {
-		return
-	}
+	cfg = NewTestConfig()
 
 	db, err = database.NewDatabase(cfg.Database.Driver, cfg.Database.ConnString)
 	if err != nil {
