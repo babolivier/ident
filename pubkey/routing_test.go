@@ -17,7 +17,7 @@ import (
 
 func TestGetPubKey(t *testing.T) {
 	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	defer s.Close()
 
@@ -28,29 +28,31 @@ func TestGetPubKey(t *testing.T) {
 }
 
 func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, expectedCode int) {
-	url := serverURL + path.Join(constants.APIPrefix, "pubkey", keyID)
+	u := serverURL + path.Join(constants.APIPrefix, "pubkey", keyID)
 
-	resp, err := http.Get(url)
-	require.Equal(t, err, nil)
-	require.Equal(t, resp.StatusCode, expectedCode)
+	resp, err := http.Get(u)
+	require.Nil(t, err)
+	require.Equal(t, expectedCode, resp.StatusCode)
 
-	if resp.StatusCode == http.StatusOK && resp.Body != nil {
+	if resp.StatusCode == http.StatusOK {
+		require.NotNil(t, resp.Body)
+
 		defer resp.Body.Close()
 
 		b, err := ioutil.ReadAll(resp.Body)
-		require.Equal(t, err, nil)
+		require.Nil(t, err)
 
 		var pubKeyResp PublicKeyResponse
 		err = json.Unmarshal(b, &pubKeyResp)
-		require.Equal(t, err, nil)
+		require.Nil(t, err)
 
-		require.Equal(t, pubKeyResp.PublicKey, cfg.Ident.SigningKey.PubKeyBase64)
+		require.Equal(t, cfg.Ident.SigningKey.PubKeyBase64, pubKeyResp.PublicKey)
 	}
 }
 
 func TestPubKeyIsValid(t *testing.T) {
 	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	defer s.Close()
 
@@ -61,7 +63,7 @@ func TestPubKeyIsValid(t *testing.T) {
 
 func TestPubKeyEphemeralIsValid(t *testing.T) {
 	_, db, s, err := testutils.InitTestRouting(SetupRouting)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	defer s.Close()
 
@@ -70,7 +72,7 @@ func TestPubKeyEphemeralIsValid(t *testing.T) {
 		"token", "email", "test@example.com", "!room:example.com",
 		"@alice:example.com", realPubKey,
 	)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	testPubKeyIsValid(t, s.URL, realPubKey, true, true)
 	testPubKeyIsValid(t, s.URL, "abcdef", true, false)
@@ -85,7 +87,7 @@ func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected 
 	}
 
 	u, err := url.Parse(serverURL + path.Join(constants.APIPrefix, route))
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	query := u.Query()
 	query.Add("public_key", b64)
@@ -93,17 +95,17 @@ func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected 
 	u.RawQuery = query.Encode()
 
 	resp, err := http.Get(u.String())
-	require.Equal(t, err, nil)
-	require.Equal(t, resp.StatusCode, http.StatusOK)
+	require.Nil(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
 
 	defer resp.Body.Close()
 
 	b, err := ioutil.ReadAll(resp.Body)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	var pubKeyValidResp PublicKeyValidResponse
 	err = json.Unmarshal(b, &pubKeyValidResp)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
-	require.Equal(t, pubKeyValidResp.Valid, expected)
+	require.Equal(t, expected, pubKeyValidResp.Valid)
 }

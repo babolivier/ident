@@ -13,7 +13,7 @@ import (
 
 func TestGetKey(t *testing.T) {
 	cfg, err := testutils.NewTestConfig()
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	realKeyID := cfg.Ident.SigningKey.Algo + ":" + cfg.Ident.SigningKey.ID
 	testGetKey(t, realKeyID, cfg, http.StatusOK)
@@ -24,18 +24,18 @@ func TestGetKey(t *testing.T) {
 func testGetKey(t *testing.T, keyID string, cfg *config.Config, expectedCode int) {
 	resp := GetKey(keyID, cfg)
 
-	require.Equal(t, resp.Code, expectedCode)
+	require.Equal(t, expectedCode, resp.Code)
 
 	if expectedCode == http.StatusOK {
 		getKeyResp, ok := resp.JSON.(PublicKeyResponse)
-		require.Equal(t, ok, true)
-		require.Equal(t, getKeyResp.PublicKey, cfg.Ident.SigningKey.PubKeyBase64)
+		require.True(t, ok)
+		require.Equal(t, cfg.Ident.SigningKey.PubKeyBase64, getKeyResp.PublicKey)
 	}
 }
 
 func TestIsPubKeyValid(t *testing.T) {
 	cfg, err := testutils.NewTestConfig()
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	testIsPubKeyValid(t, cfg.Ident.SigningKey.PubKeyBase64, cfg, true)
 	testIsPubKeyValid(t, "abcdef", cfg, false)
@@ -44,11 +44,11 @@ func TestIsPubKeyValid(t *testing.T) {
 func testIsPubKeyValid(t *testing.T, b64 string, cfg *config.Config, expected bool) {
 	resp := IsPubKeyValid(b64, cfg)
 
-	require.Equal(t, resp.Code, http.StatusOK)
+	require.Equal(t, http.StatusOK, resp.Code)
 
 	keyValidResp, ok := resp.JSON.(PublicKeyValidResponse)
-	require.Equal(t, ok, true)
-	require.Equal(t, keyValidResp.Valid, expected)
+	require.True(t, ok)
+	require.Equal(t, expected, keyValidResp.Valid)
 }
 
 func TestIsEphemeralPubKeyValid(t *testing.T) {
@@ -62,7 +62,7 @@ func TestIsEphemeralPubKeyValid(t *testing.T) {
 		"token", "email", "test@example.com", "!room:example.com",
 		"@alice:example.com", realPubKey,
 	)
-	require.Equal(t, err, nil)
+	require.Nil(t, err)
 
 	testIsEphemeralPubKeyValid(t, realPubKey, db, true)
 	testIsEphemeralPubKeyValid(t, "abcdef", db, false)
@@ -71,9 +71,9 @@ func TestIsEphemeralPubKeyValid(t *testing.T) {
 func testIsEphemeralPubKeyValid(t *testing.T, b64 string, db *database.Database, expected bool) {
 	resp := IsEphemeralPubKeyValid(b64, db)
 
-	require.Equal(t, resp.Code, http.StatusOK)
+	require.Equal(t, http.StatusOK, resp.Code)
 
 	keyValidResp, ok := resp.JSON.(PublicKeyValidResponse)
-	require.Equal(t, ok, true)
-	require.Equal(t, keyValidResp.Valid, expected)
+	require.True(t, ok)
+	require.Equal(t, expected, keyValidResp.Valid)
 }
