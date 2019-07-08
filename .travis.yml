@@ -8,7 +8,10 @@ env:
   global:
     - GO111MODULE=on
   matrix:
-    - SUITE=build
+    - SUITE=build GOOS=linux
+    - SUITE=build GOOS=darwin
+    - SUITE=build GOOS=freebsd
+    - SUITE=build GOOS=windows
     - SUITE=test
     - SUITE=codecov
 

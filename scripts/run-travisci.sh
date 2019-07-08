@@ -1,10 +1,7 @@
 #!/bin/bash
 
 if [ $SUITE == "build" ]; then
-    GOOS=linux go build
-    GOOS=darwin go build
-    GOOS=freebsd go build
-    GOOS=windows go build
+    go build
 fi
 
 if [ $SUITE == "test" ]; then
