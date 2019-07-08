@@ -2,19 +2,25 @@ language: go
 
 go:
   - 1.11.x
+  - 1.12.x
 
 env:
   global:
     - GO111MODULE=on
+  matrix:
+    - SUITE=build
+    - SUITE=test
+    - SUITE=codecov
+
+matrix:
+  exclude:
+    - go: 1.11.x
+      env: SUITE=codecov
+    - go: 1.12.x
+      env: SUITE=codecov
 
 script:
-  - GOOS=linux go build
-  - GOOS=darwin go build
-  - GOOS=freebsd go build
-  - GOOS=windows go build
-
-  - go test -v -coverprofile=coverage.txt -covermode=atomic ./...
-  - go test -v -race ./...
+  - ./run-travisci.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
