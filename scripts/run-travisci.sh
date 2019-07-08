@@ -1,7 +1,7 @@
-#!/bin/bash -xe
+#!/bin/bash -e
 
 if [ $SUITE == "build" ]; then
-    go build
+    go build -v
 fi
 
 if [ $SUITE == "test" ]; then
