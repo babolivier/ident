@@ -21,7 +21,7 @@ matrix:
       env: SUITE=codecov
 
 script:
-  - ./run-travisci.sh
+  - ./scripts/run-travisci.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
