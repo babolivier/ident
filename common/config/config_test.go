@@ -4,44 +4,14 @@ import (
 	"encoding/base64"
 	"testing"
 
-	"golang.org/x/crypto/ed25519"
+	"github.com/babolivier/ident/common/constants"
 
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/ed25519"
 )
 
-var configYAML = `
-ident:
-  server_name: test
-  base_url: "http://127.0.0.1:9999"
-  signing_key:
-    algo: ed25519
-    id: 0
-    seed: ahphigh9jahchiequiechee4pha1Atuv
-  invites:
-    email_template:
-      text: "templates/text/invite.txt"
-      html: "templates/html/invite.html"
-    subject_template: "{{.SenderDisplayName}} invited you to Matrix!"
-
-http:
-  listen_addr: "127.0.0.1:9999"
-
-database:
-  driver: sqlite3
-  conn_string: ":memory:"
-
-email:
-  from: "Ident <ident@example.com>"
-  smtp:
-    hostname: mail.example.com
-    port: 465
-    username: "ident@example.com"
-    password: somepassword
-    enable_tls: on
-`
-
 func TestParseConfig(t *testing.T) {
-	cfg, err := ParseConfig([]byte(configYAML))
+	cfg, err := ParseConfig([]byte(constants.TestConfigYAML))
 
 	require.Equal(t, err, nil)
 
