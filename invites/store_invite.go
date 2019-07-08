@@ -196,5 +196,10 @@ func getResp(req *StoreInviteReq, cfg *config.Config, pubKeyBase64 string) *Stor
 
 func redactEmail(email string) string {
 	split := strings.SplitN(email, "@", 2)
+
+	if len(split) < 2 {
+		return fmt.Sprintf("%c...", split[0][0])
+	}
+
 	return fmt.Sprintf("%c...@%c...", split[0][0], split[1][0])
 }
