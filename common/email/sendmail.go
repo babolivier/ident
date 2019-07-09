@@ -143,7 +143,7 @@ func generateEmail(cfg *config.Config, w io.Writer, to, templateTXT, templateHTM
 		rw := multipart.NewWriter(w)
 		_, _ = aw.CreatePart(textproto.MIMEHeader{"Content-Type": {"multipart/related; boundary=" + rw.Boundary()}})
 
-		if err = loadBodyTemplate(rw, templateTXT, "text/html", data); err != nil {
+		if err = loadBodyTemplate(rw, templateHTML, "text/html", data); err != nil {
 			return errors.Wrap(err, "Couldn't generate the plain HTML of the message")
 		}
 	}

@@ -10,8 +10,8 @@ ident:
     seed: ahphigh9jahchiequiechee4pha1Atuv
   invites:
     email_template:
-      text: "templates/text/invite.txt"
-      html: "templates/html/invite.html"
+      text: "/tmp/ident_invite_template_txt"
+      html: "/tmp/ident_invite_template_html"
     subject_template: "{{.SenderDisplayName}} invited you to Matrix!"
 
 http:

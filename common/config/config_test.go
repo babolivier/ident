@@ -37,8 +37,8 @@ func TestParseConfig(t *testing.T) {
 	require.Equal(t, pubKeyBase64, cfg.Ident.SigningKey.PubKeyBase64)
 
 	require.Equal(t, "{{.SenderDisplayName}} invited you to Matrix!", cfg.Ident.Invites.SubjectTemplate)
-	require.Equal(t, "templates/text/invite.txt", cfg.Ident.Invites.EmailTemplate.Text)
-	require.Equal(t, "templates/html/invite.html", cfg.Ident.Invites.EmailTemplate.HTML)
+	require.Equal(t, "/tmp/ident_invite_template_txt", cfg.Ident.Invites.EmailTemplate.Text)
+	require.Equal(t, "/tmp/ident_invite_template_html", cfg.Ident.Invites.EmailTemplate.HTML)
 
 	require.Equal(t, "Ident <ident@example.com>", cfg.Email.From)
 	require.Equal(t, "mail.example.com", cfg.Email.SMTP.Hostname)

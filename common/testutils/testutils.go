@@ -1,7 +1,10 @@
 package testutils
 
 import (
+	"github.com/stretchr/testify/require"
+	"io/ioutil"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/constants"
@@ -10,13 +13,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var testConfig *config.Config
+
 func NewTestConfig() *config.Config {
-	c, err := config.ParseConfig([]byte(constants.TestConfigYAML))
+	if testConfig != nil {
+		return testConfig
+	}
+
+	var err error
+	testConfig, err = config.ParseConfig([]byte(constants.TestConfigYAML))
 	if err != nil {
 		panic(err)
 	}
 
-	return c
+	return testConfig
 }
 
 func InitTestRouting(
@@ -42,4 +52,15 @@ func NewTestServer(
 	setupRouting(router, cfg, db)
 
 	return httptest.NewServer(router)
+}
+
+func TestWithTmpFiles(t *testing.T, testFunc func(t *testing.T), files map[string]string) {
+	for name, content := range files {
+		err := ioutil.WriteFile(name, []byte(content), 0655)
+		require.Nil(t, err, err)
+
+		//defer os.Remove(name)
+	}
+
+	testFunc(t)
 }
