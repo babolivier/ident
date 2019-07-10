@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 
+	"github.com/babolivier/ident/common/types"
+
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -34,8 +36,8 @@ func NewDatabase(driver string, connString string) (*Database, error) {
 	return &Database{db, invites, ephemeralPublicKeys}, nil
 }
 
-func (d *Database) Save3PIDInvite(token, medium, address, roomID, sender string) error {
-	return d.invites.insertInvite(token, medium, address, roomID, sender)
+func (d *Database) Save3PIDInvite(invite *types.ThreepidInvite) error {
+	return d.invites.insertInvite(invite)
 }
 
 func (d *Database) SaveEphemeralPublicKey(pubkey string) error {

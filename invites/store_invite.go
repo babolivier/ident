@@ -15,6 +15,7 @@ import (
 	"github.com/babolivier/ident/common/constants"
 	"github.com/babolivier/ident/common/database"
 	"github.com/babolivier/ident/common/email"
+	"github.com/babolivier/ident/common/types"
 
 	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/gomatrixserverlib"
@@ -24,10 +25,7 @@ import (
 )
 
 type StoreInviteReq struct {
-	Medium            string `json:"medium"`
-	Address           string `json:"address"`
-	RoomID            string `json:"room_id"`
-	Sender            string `json:"sender"`
+	types.ThreepidInvite
 	RoomAlias         string `json:"room_alias"`
 	RoomAvatarURL     string `json:"room_avatar_url"`
 	RoomJoinRules     string `json:"room_join_rules"`
@@ -36,7 +34,6 @@ type StoreInviteReq struct {
 	SenderAvatarURL   string `json:"sender_avatar_url"`
 	PrivKeyBase64     string
 	BaseURL           string
-	Token             string
 }
 
 type StoreInviteResp struct {
@@ -69,7 +66,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	// Sydent supports both the `application/json` and `application/x-www-form-urlencoded` content-types,
 	// but that's mainly due to an implementation bug in Synapse: https://github.com/matrix-org/synapse/issues/5634
 	// Let's just follow the spec here.
-	var req types.StoreInviteReq
+	var req StoreInviteReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return common.InternalServerError(err)
 	}
@@ -119,7 +116,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	}
 }
 
-func checkReq(req *types.StoreInviteReq) (resp *util.JSONResponse) {
+func checkReq(req *StoreInviteReq) (resp *util.JSONResponse) {
 	// Check if we support this medium.
 	// TODO: Implement MSISDN.
 	if req.Medium != constants.MediumEmail {

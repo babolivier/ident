@@ -23,7 +23,7 @@ type req struct {
 }
 
 func TestGenerateEmail(t *testing.T) {
-	cfg := testutils.NewTestConfig()
+	cfg := testutils.NewTestConfig(t)
 
 	files := map[string]string{
 		cfg.Ident.Invites.EmailTemplate.Text: "{{.SenderDisplayName}} - {{.RoomID}} - {{.Token}}",
@@ -49,7 +49,7 @@ func testGenerateEmail(t *testing.T) {
 	// more bytes than necessary. Therefore, we must consider this error as a nil error.
 	allowedReadErrors := []error{nil, io.EOF}
 
-	cfg := testutils.NewTestConfig()
+	cfg := testutils.NewTestConfig(t)
 	buf := bytes.NewBuffer(nil)
 	to := "alice@example.com"
 	req := &req{
@@ -139,7 +139,7 @@ func testGenerateEmail(t *testing.T) {
 }
 
 func TestLoadBodyTemplate(t *testing.T) {
-	cfg := testutils.NewTestConfig()
+	cfg := testutils.NewTestConfig(t)
 
 	files := map[string]string{
 		cfg.Ident.Invites.EmailTemplate.Text: "{{.SenderDisplayName}} - {{.RoomID}} - {{.Token}}",
@@ -149,7 +149,7 @@ func TestLoadBodyTemplate(t *testing.T) {
 }
 
 func testLoadBodyTemplate(t *testing.T) {
-	cfg := testutils.NewTestConfig()
+	cfg := testutils.NewTestConfig(t)
 
 	req := &req{
 		SenderDisplayName: "alice",
@@ -186,7 +186,7 @@ func testLoadBodyTemplate(t *testing.T) {
 }
 
 func TestLoadSubjectTemplate(t *testing.T) {
-	cfg := testutils.NewTestConfig()
+	cfg := testutils.NewTestConfig(t)
 
 	req := &req{
 		SenderDisplayName: "alice",

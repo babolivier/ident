@@ -16,7 +16,7 @@ import (
 )
 
 func TestGetPubKey(t *testing.T) {
-	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
+	cfg, _, s, err := testutils.InitTestRouting(t, SetupRouting)
 	require.Nil(t, err, err)
 
 	defer s.Close()
@@ -51,7 +51,7 @@ func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, ex
 }
 
 func TestPubKeyIsValid(t *testing.T) {
-	cfg, _, s, err := testutils.InitTestRouting(SetupRouting)
+	cfg, _, s, err := testutils.InitTestRouting(t, SetupRouting)
 	require.Nil(t, err, err)
 
 	defer s.Close()
@@ -62,7 +62,7 @@ func TestPubKeyIsValid(t *testing.T) {
 }
 
 func TestPubKeyEphemeralIsValid(t *testing.T) {
-	_, db, s, err := testutils.InitTestRouting(SetupRouting)
+	_, db, s, err := testutils.InitTestRouting(t, SetupRouting)
 	require.Nil(t, err, err)
 
 	defer s.Close()

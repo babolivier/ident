@@ -1,9 +1,9 @@
 package testutils
 
 import (
-	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/babolivier/ident/common/config"
@@ -11,33 +11,36 @@ import (
 	"github.com/babolivier/ident/common/database"
 
 	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
 )
 
 var testConfig *config.Config
+var testDB *database.Database
 
-func NewTestConfig() *config.Config {
+func NewTestConfig(t *testing.T) *config.Config {
 	if testConfig != nil {
 		return testConfig
 	}
 
 	var err error
 	testConfig, err = config.ParseConfig([]byte(constants.TestConfigYAML))
-	if err != nil {
-		panic(err)
-	}
+	require.Nil(t, err, err)
 
 	return testConfig
 }
 
-func InitTestRouting(
-	setupRouting func(*mux.Router, *config.Config, *database.Database),
-) (cfg *config.Config, db *database.Database, s *httptest.Server, err error) {
-	cfg = NewTestConfig()
+func NewTestDB(t *testing.T) *database.Database {
+	cfg := NewTestConfig(t)
+	db, err := database.NewDatabase(cfg.Database.Driver, cfg.Database.ConnString)
+	require.Nil(t, err, err)
+	return db
+}
 
-	db, err = database.NewDatabase(cfg.Database.Driver, cfg.Database.ConnString)
-	if err != nil {
-		return
-	}
+func InitTestRouting(
+	t *testing.T, setupRouting func(*mux.Router, *config.Config, *database.Database),
+) (cfg *config.Config, db *database.Database, s *httptest.Server, err error) {
+	cfg = NewTestConfig(t)
+	db = NewTestDB(t)
 
 	s = NewTestServer(cfg, db, setupRouting)
 	return
@@ -59,7 +62,7 @@ func TestWithTmpFiles(t *testing.T, testFunc func(t *testing.T), files map[strin
 		err := ioutil.WriteFile(name, []byte(content), 0655)
 		require.Nil(t, err, err)
 
-		//defer os.Remove(name)
+		defer os.Remove(name)
 	}
 
 	testFunc(t)

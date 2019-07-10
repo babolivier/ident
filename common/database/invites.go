@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+
+	"github.com/babolivier/ident/common/types"
 )
 
 const invitesSchema = `
@@ -20,6 +22,11 @@ const insertInviteSQL = `
 	VALUES ($1, $2, $3, $4, $5)
 `
 
+const selectInviteFromTokenSQL = `
+	SELECT medium, address, room_id, sender, token FROM invites
+	WHERE token = $1
+`
+
 const selectInvitesForAddressAndMediumSQL = `
 	SELECT medium, address, room_id, sender, token FROM invites
 	WHERE medium = $1 AND address = $2
@@ -31,6 +38,7 @@ const deleteInvitesByAddressAndMediumSQL = `
 
 type invitesStatements struct {
 	insertInviteStmt                     *sql.Stmt
+	selectInviteFromTokenStmt            *sql.Stmt
 	selectInvitesForAddressAndMediumStmt *sql.Stmt
 	deleteInvitesByAddressAndMediumStmt  *sql.Stmt
 }
@@ -43,6 +51,9 @@ func (s *invitesStatements) prepare(db *sql.DB) (err error) {
 	if s.insertInviteStmt, err = db.Prepare(insertInviteSQL); err != nil {
 		return
 	}
+	if s.selectInviteFromTokenStmt, err = db.Prepare(selectInviteFromTokenSQL); err != nil {
+		return
+	}
 	if s.selectInvitesForAddressAndMediumStmt, err = db.Prepare(selectInvitesForAddressAndMediumSQL); err != nil {
 		return
 	}
@@ -53,11 +64,18 @@ func (s *invitesStatements) prepare(db *sql.DB) (err error) {
 
 }
 
-func (s *invitesStatements) insertInvite(
-	token, medium, address, roomID, sender string,
-) (err error) {
+func (s *invitesStatements) insertInvite(invite *types.ThreepidInvite) (err error) {
 	_, err = s.insertInviteStmt.Exec(
-		token, medium, address, roomID, sender,
+		invite.Token, invite.Medium, invite.Address, invite.RoomID, invite.Sender,
 	)
 	return
+}
+
+func (s *invitesStatements) selectInviteFromToken(token string) (*types.ThreepidInvite, error) {
+	var invite types.ThreepidInvite
+
+	row := s.selectInviteFromTokenStmt.QueryRow(token)
+	err := row.Scan(&invite.Medium, &invite.Address, &invite.RoomID, &invite.Sender, &invite.Token)
+
+	return &invite, err
 }

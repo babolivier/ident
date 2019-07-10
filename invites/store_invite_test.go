@@ -7,6 +7,7 @@ import (
 
 	"github.com/babolivier/ident/common/constants"
 	"github.com/babolivier/ident/common/testutils"
+	"github.com/babolivier/ident/common/types"
 
 	"github.com/matrix-org/gomatrix"
 	"github.com/stretchr/testify/require"
@@ -14,10 +15,12 @@ import (
 
 func TestCheckReqValid(t *testing.T) {
 	req := &StoreInviteReq{
-		Medium:  constants.MediumEmail,
-		Address: "test@example.com",
-		RoomID:  "!someroom:example.com",
-		Sender:  "@alice:example.com",
+		ThreepidInvite: types.ThreepidInvite{
+			Medium:  constants.MediumEmail,
+			Address: "test@example.com",
+			RoomID:  "!someroom:example.com",
+			Sender:  "@alice:example.com",
+		},
 	}
 
 	resp := checkReq(req)
@@ -26,10 +29,12 @@ func TestCheckReqValid(t *testing.T) {
 
 func TestCheckReqUnsupportedMedium(t *testing.T) {
 	req := &StoreInviteReq{
-		Medium:  constants.MediumMSISDN, // TODO: Change this when MSISDN is supported.
-		Address: "test@example.com",
-		RoomID:  "!someroom:example.com",
-		Sender:  "@alice:example.com",
+		ThreepidInvite: types.ThreepidInvite{
+			Medium:  constants.MediumMSISDN, // TODO: Change this when MSISDN is supported.
+			Address: "test@example.com",
+			RoomID:  "!someroom:example.com",
+			Sender:  "@alice:example.com",
+		},
 	}
 
 	resp := checkReq(req)
@@ -40,10 +45,12 @@ func TestCheckReqUnsupportedMedium(t *testing.T) {
 
 func TestCheckReqBadEmail(t *testing.T) {
 	req := &StoreInviteReq{
-		Medium:  constants.MediumEmail,
-		Address: "testexample.com",
-		RoomID:  "!someroom:example.com",
-		Sender:  "@alice:example.com",
+		ThreepidInvite: types.ThreepidInvite{
+			Medium:  constants.MediumEmail,
+			Address: "testexample.com",
+			RoomID:  "!someroom:example.com",
+			Sender:  "@alice:example.com",
+		},
 	}
 
 	resp := checkReq(req)
@@ -60,10 +67,12 @@ func TestCheckReqBadEmail(t *testing.T) {
 
 func TestCheckReqBadRoomID(t *testing.T) {
 	req := &StoreInviteReq{
-		Medium:  constants.MediumEmail,
-		Address: "test@example.com",
-		RoomID:  "someroom:example.com",
-		Sender:  "@alice:example.com",
+		ThreepidInvite: types.ThreepidInvite{
+			Medium:  constants.MediumEmail,
+			Address: "test@example.com",
+			RoomID:  "someroom:example.com",
+			Sender:  "@alice:example.com",
+		},
 	}
 
 	resp := checkReq(req)
@@ -80,10 +89,12 @@ func TestCheckReqBadRoomID(t *testing.T) {
 
 func TestCheckReqBadSender(t *testing.T) {
 	req := StoreInviteReq{
-		Medium:  constants.MediumEmail,
-		Address: "test@example.com",
-		RoomID:  "!someroom:example.com",
-		Sender:  "alice:example.com",
+		ThreepidInvite: types.ThreepidInvite{
+			Medium:  constants.MediumEmail,
+			Address: "test@example.com",
+			RoomID:  "!someroom:example.com",
+			Sender:  "alice:example.com",
+		},
 	}
 
 	resp := checkReq(&req)
@@ -105,11 +116,13 @@ func TestIsEmailAddressValid(t *testing.T) {
 }
 
 func TestGetResp(t *testing.T) {
-	cfg := testutils.NewTestConfig()
+	cfg := testutils.NewTestConfig(t)
 
 	req := &StoreInviteReq{
-		Token:   "sometoken",
-		Address: "alice@example.com",
+		ThreepidInvite: types.ThreepidInvite{
+			Address: "alice@example.com",
+			Token:   "sometoken",
+		},
 	}
 
 	pubKey := "somekey"
