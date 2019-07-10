@@ -2,7 +2,7 @@
 
 [![#ident:abolivier.bzh on Matrix](https://img.shields.io/matrix/ident:matrix.org.svg?logo=matrix&label=%23ident:abolivier.bzh)](https://matrix.to/#/#ident:abolivier.bzh) [![Build Status](https://travis-ci.org/babolivier/ident.svg?branch=master)](https://travis-ci.org/babolivier/ident) [![codecov](https://codecov.io/gh/babolivier/ident/branch/master/graph/badge.svg)](https://codecov.io/gh/babolivier/ident) 
 
-Ident will be a lightweight identity server for [Matrix](https://matrix.org).
+Ident will be a simple and lightweight identity server for [Matrix](https://matrix.org).
 
 Its aim is to be a full implementation of the [identity server specification](https://matrix.org/docs/spec/identity_service/r0.2.1) and nothing more. The current goal is compliance with the release 0.2.1 of this specification.
 
