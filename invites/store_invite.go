@@ -69,9 +69,9 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	// Sydent supports both the `application/json` and `application/x-www-form-urlencoded` content-types,
 	// but that's mainly due to an implementation bug in Synapse: https://github.com/matrix-org/synapse/issues/5634
 	// Let's just follow the spec here.
-	var req StoreInviteReq
+	var req types.StoreInviteReq
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		return common.InternalServerError()
+		return common.InternalServerError(err)
 	}
 
 	// Check that the request params are valid.
@@ -82,7 +82,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	// Generate the ephemeral key.
 	pubKey, privKey, err := ed25519.GenerateKey(rand.New(rand.NewSource(time.Now().Unix())))
 	if err != nil {
-		return common.InternalServerError()
+		return common.InternalServerError(err)
 	}
 
 	// Add additional info to the request instance (will be used when processing the templates)
@@ -96,12 +96,12 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	); err != nil {
 		// Log the error as the mail sending process is a bit more complex.
 		logrus.WithError(err).Error("Couldn't send 3PID invite email")
-		return common.InternalServerError()
+		return common.InternalServerError(err)
 	}
 
 	// Save the data about the invite in the database.
-	if err = db.Save3PIDInvite(req.Token, req.Medium, req.Address, req.RoomID, req.Sender); err != nil {
-		return common.InternalServerError()
+	if err = db.Save3PIDInvite(&req.ThreepidInvite); err != nil {
+		return common.InternalServerError(err)
 	}
 
 	// Encode the public key into base 64 to save it in the database and send it to the client.
@@ -109,7 +109,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 
 	// Save the data about the public key in the database.
 	if err = db.SaveEphemeralPublicKey(pubKeyBase64); err != nil {
-		return common.InternalServerError()
+		return common.InternalServerError(err)
 	}
 
 	// Send the invite data to the client.
@@ -119,7 +119,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	}
 }
 
-func checkReq(req *StoreInviteReq) (resp *util.JSONResponse) {
+func checkReq(req *types.StoreInviteReq) (resp *util.JSONResponse) {
 	// Check if we support this medium.
 	// TODO: Implement MSISDN.
 	if req.Medium != constants.MediumEmail {

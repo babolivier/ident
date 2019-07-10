@@ -5,6 +5,7 @@ import (
 
 	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/util"
+	"github.com/sirupsen/logrus"
 )
 
 func MakeAPI(f func(r *http.Request) util.JSONResponse) http.Handler {
@@ -13,7 +14,9 @@ func MakeAPI(f func(r *http.Request) util.JSONResponse) http.Handler {
 	return h
 }
 
-func InternalServerError() util.JSONResponse {
+func InternalServerError(err error) util.JSONResponse {
+	logrus.WithError(err).Error("An error happened when processing the request")
+
 	return util.JSONResponse{
 		Code: 500,
 		JSON: gomatrix.RespError{
