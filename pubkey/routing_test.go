@@ -68,10 +68,7 @@ func TestPubKeyEphemeralIsValid(t *testing.T) {
 	defer s.Close()
 
 	realPubKey := "somekey"
-	err = db.Save3PIDInvite(
-		"token", "email", "test@example.com", "!room:example.com",
-		"@alice:example.com", realPubKey,
-	)
+	err = db.SaveEphemeralPublicKey(realPubKey)
 	require.Nil(t, err, err)
 
 	testPubKeyIsValid(t, s.URL, realPubKey, true, true)

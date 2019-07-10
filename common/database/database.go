@@ -8,8 +8,9 @@ import (
 )
 
 type Database struct {
-	db      *sql.DB
-	invites invitesStatements
+	db                  *sql.DB
+	invites             invitesStatements
+	ephemeralPublicKeys ephemeralPublicKeysStatements
 }
 
 func NewDatabase(driver string, connString string) (*Database, error) {
@@ -25,13 +26,22 @@ func NewDatabase(driver string, connString string) (*Database, error) {
 		return nil, err
 	}
 
-	return &Database{db, invites}, nil
+	ephemeralPublicKeys := ephemeralPublicKeysStatements{}
+	if err = ephemeralPublicKeys.prepare(db); err != nil {
+		return nil, err
+	}
+
+	return &Database{db, invites, ephemeralPublicKeys}, nil
 }
 
-func (d *Database) Save3PIDInvite(token, medium, address, room_id, sender, ephemeral_public_key string) error {
-	return d.invites.insertInvite(token, medium, address, room_id, sender, ephemeral_public_key)
+func (d *Database) Save3PIDInvite(token, medium, address, roomID, sender string) error {
+	return d.invites.insertInvite(token, medium, address, roomID, sender)
+}
+
+func (d *Database) SaveEphemeralPublicKey(pubkey string) error {
+	return d.ephemeralPublicKeys.insertEphemeralPublicKey(pubkey)
 }
 
 func (d *Database) EphemeralPublicKeyExists(pubkey string) (bool, error) {
-	return d.invites.ephemeralPublicKeyExists(pubkey)
+	return d.ephemeralPublicKeys.ephemeralPublicKeyExists(pubkey)
 }

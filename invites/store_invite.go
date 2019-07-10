@@ -99,11 +99,16 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 		return common.InternalServerError()
 	}
 
+	// Save the data about the invite in the database.
+	if err = db.Save3PIDInvite(req.Token, req.Medium, req.Address, req.RoomID, req.Sender); err != nil {
+		return common.InternalServerError()
+	}
+
 	// Encode the public key into base 64 to save it in the database and send it to the client.
 	pubKeyBase64 := base64.RawStdEncoding.EncodeToString(pubKey)
 
-	// Save the data about the invite in the database.
-	if err = db.Save3PIDInvite(req.Token, req.Medium, req.Address, req.RoomID, req.Sender, pubKeyBase64); err != nil {
+	// Save the data about the public key in the database.
+	if err = db.SaveEphemeralPublicKey(pubKeyBase64); err != nil {
 		return common.InternalServerError()
 	}
 
