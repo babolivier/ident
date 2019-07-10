@@ -44,6 +44,11 @@ func testGenerateEmail(t *testing.T) {
 	//     `- multipart/related
 	//        `- text/html
 
+	// When reading the body of a part, EOF means that we've reached a boundary or the end of the payload before all of
+	// the bytes in the slice are filled. We only care about having the full body, so we'll deliberately give the reader
+	// more bytes than necessary. Therefore, we must consider this error as a nil error.
+	allowedReadErrors := []error{nil, io.EOF}
+
 	cfg := testutils.NewTestConfig()
 	buf := bytes.NewBuffer(nil)
 	to := "alice@example.com"
@@ -82,7 +87,7 @@ func testGenerateEmail(t *testing.T) {
 
 	alternativeBytes := make([]byte, 1500)
 	n, err := part.Read(alternativeBytes)
-	require.False(t, err != nil && err != io.EOF, err)
+	require.Contains(t, allowedReadErrors, err, err)
 	alternativeBytes = alternativeBytes[:n]
 
 	alternativeReader := bytes.NewReader(alternativeBytes)
@@ -111,7 +116,7 @@ func testGenerateEmail(t *testing.T) {
 
 	relatedBytes := make([]byte, 1500)
 	n, err = alternativePart.Read(relatedBytes)
-	require.False(t, err != nil && err != io.EOF, err)
+	require.Contains(t, allowedReadErrors, err, err)
 	relatedBytes = relatedBytes[:n]
 
 	relatedReader := bytes.NewReader(relatedBytes)
@@ -126,7 +131,7 @@ func testGenerateEmail(t *testing.T) {
 
 	htmlContentBytes := make([]byte, 1500)
 	n, err = relatedPart.Read(htmlContentBytes)
-	require.False(t, err != nil && err != io.EOF, err)
+	require.Contains(t, allowedReadErrors, err, err)
 	htmlContentBytes = htmlContentBytes[:n]
 
 	require.Equal(t, "<p>alice - !someroom:example.com - sometoken</p>", string(htmlContentBytes))
