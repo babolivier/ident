@@ -59,4 +59,4 @@ email:
     enable_tls: true
 ```
 
-A more detail documentation on this file will be provided in the future.
+A more detailed documentation on this file will be provided in the future.
