@@ -76,6 +76,8 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 		return *resp
 	}
 
+	// TODO: Check if there's an MXID associated with this 3PID and return here with it if so.
+
 	// Generate the ephemeral key.
 	pubKey, privKey, err := ed25519.GenerateKey(rand.New(rand.NewSource(time.Now().Unix())))
 	if err != nil {
