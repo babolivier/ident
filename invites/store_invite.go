@@ -130,7 +130,13 @@ func checkStoreInviteReq(req *StoreInviteReq) *util.JSONResponse {
 
 	// Check if the email address is valid.
 	if req.Medium == constants.MediumEmail && !isEmailAddressValid(req.Address) {
-		resp = common.InvalidParamError("Invalid email address")
+		resp = util.JSONResponse{
+			Code: 400,
+			JSON: gomatrix.RespError{
+				ErrCode: "M_INVALID_EMAIL",
+				Err:     "Invalid email address",
+			},
+		}
 		return &resp
 	}
 
