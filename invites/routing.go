@@ -16,4 +16,7 @@ func SetupRouting(router *mux.Router, cfg *config.Config, db *database.Database)
 		return StoreInvite(r, cfg, db)
 	})).Methods(http.MethodOptions, http.MethodPost)
 
+	router.Handle("/sign-ed25519", common.MakeAPI(func(r *http.Request) util.JSONResponse {
+		return SignED25519(r, cfg, db)
+	})).Methods(http.MethodOptions, http.MethodPost)
 }

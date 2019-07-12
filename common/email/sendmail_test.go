@@ -135,7 +135,6 @@ func testGenerateEmail(t *testing.T) {
 	htmlContentBytes = htmlContentBytes[:n]
 
 	require.Equal(t, "<p>alice - !someroom:example.com - sometoken</p>", string(htmlContentBytes))
-
 }
 
 func TestLoadBodyTemplate(t *testing.T) {

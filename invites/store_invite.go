@@ -72,7 +72,7 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	}
 
 	// Check that the request params are valid.
-	if resp := checkReq(&req); resp != nil {
+	if resp := checkStoreInviteReq(&req); resp != nil {
 		return *resp
 	}
 
@@ -114,54 +114,36 @@ func StoreInvite(r *http.Request, cfg *config.Config, db *database.Database) uti
 	// Send the invite data to the client.
 	return util.JSONResponse{
 		Code: 200,
-		JSON: getResp(&req, cfg, pubKeyBase64),
+		JSON: getStoreInviteResp(&req, cfg, pubKeyBase64),
 	}
 }
 
-func checkReq(req *StoreInviteReq) (resp *util.JSONResponse) {
+func checkStoreInviteReq(req *StoreInviteReq) *util.JSONResponse {
+	var resp util.JSONResponse
+
 	// Check if we support this medium.
 	// TODO: Implement MSISDN.
 	if req.Medium != constants.MediumEmail {
-		return &util.JSONResponse{
-			Code: 400,
-			JSON: gomatrix.RespError{
-				ErrCode: "M_INVALID_PARAMS",
-				Err:     "Unsupported medium: " + req.Medium,
-			},
-		}
+		resp = common.InvalidParamError("Unsupported medium: " + req.Medium)
+		return &resp
 	}
 
 	// Check if the email address is valid.
 	if req.Medium == constants.MediumEmail && !isEmailAddressValid(req.Address) {
-		return &util.JSONResponse{
-			Code: 400,
-			JSON: gomatrix.RespError{
-				ErrCode: "M_INVALID_EMAIL",
-				Err:     "Invalid email address",
-			},
-		}
+		resp = common.InvalidParamError("Invalid email address")
+		return &resp
 	}
 
-	// Check if the room ID is valid.
 	if _, _, err := gomatrixserverlib.SplitID('!', req.RoomID); err != nil {
-		return &util.JSONResponse{
-			Code: 400,
-			JSON: gomatrix.RespError{
-				ErrCode: "M_INVALID_PARAMS",
-				Err:     "Invalid room ID",
-			},
-		}
+		// Check if the room ID is valid.
+		resp = common.InvalidParamError("Invalid room ID")
+		return &resp
 	}
 
 	// Check if the sender's user ID is valid.
 	if _, _, err := gomatrixserverlib.SplitID('@', req.Sender); err != nil {
-		return &util.JSONResponse{
-			Code: 400,
-			JSON: gomatrix.RespError{
-				ErrCode: "M_INVALID_PARAMS",
-				Err:     "Invalid sender ID",
-			},
-		}
+		resp = common.InvalidParamError("Invalid sender ID")
+		return &resp
 	}
 
 	return nil
@@ -173,10 +155,11 @@ func isEmailAddressValid(email string) bool {
 
 	// Prevent username@domain1@domain2
 	// c.f. https://matrix.org/blog/2019/04/18/security-update-sydent-1-0-2
-	return atCount == 1
+	// Also ensure that there's a localpart and a server name.
+	return atCount == 1 && len(email) >= 3
 }
 
-func getResp(req *StoreInviteReq, cfg *config.Config, pubKeyBase64 string) *StoreInviteResp {
+func getStoreInviteResp(req *StoreInviteReq, cfg *config.Config, pubKeyBase64 string) *StoreInviteResp {
 	// Instantiate a response.
 	resp := StoreInviteResp{
 		Token:       req.Token,

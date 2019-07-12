@@ -71,7 +71,7 @@ func (s *invitesStatements) insertInvite(invite *types.ThreepidInvite) (err erro
 	return
 }
 
-func (s *invitesStatements) selectInviteFromToken(token string) (*types.ThreepidInvite, error) {
+func (s *invitesStatements) selectInviteByToken(token string) (*types.ThreepidInvite, error) {
 	var invite types.ThreepidInvite
 
 	row := s.selectInviteFromTokenStmt.QueryRow(token)

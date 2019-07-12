@@ -40,6 +40,18 @@ func (d *Database) Save3PIDInvite(invite *types.ThreepidInvite) error {
 	return d.invites.insertInvite(invite)
 }
 
+func (d *Database) Get3PIDInviteByToken(token string) (*types.ThreepidInvite, error) {
+	invite, err := d.invites.selectInviteByToken(token)
+
+	// Don't return an error on empty result set, instead return a nil invite.
+	if err == sql.ErrNoRows {
+		invite = nil
+		err = nil
+	}
+
+	return invite, err
+}
+
 func (d *Database) SaveEphemeralPublicKey(pubkey string) error {
 	return d.ephemeralPublicKeys.insertEphemeralPublicKey(pubkey)
 }

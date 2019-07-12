@@ -2,15 +2,19 @@ package testutils
 
 import (
 	"io/ioutil"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
 
+	"github.com/babolivier/ident/common"
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/constants"
 	"github.com/babolivier/ident/common/database"
 
 	"github.com/gorilla/mux"
+	"github.com/matrix-org/gomatrix"
+	"github.com/matrix-org/util"
 	"github.com/stretchr/testify/require"
 )
 
@@ -53,6 +57,16 @@ func NewTestServer(
 	// Create the router and register the handler for the status check route.
 	router := mux.NewRouter().UseEncodedPath().PathPrefix(constants.APIPrefix).Subrouter()
 	setupRouting(router, cfg, db)
+
+	router.NotFoundHandler = common.MakeAPI(func(r *http.Request) util.JSONResponse {
+		return util.JSONResponse{
+			Code: 404,
+			JSON: gomatrix.RespError{
+				ErrCode: "M_NOT_FOUND",
+				Err:     "Unrecognised request",
+			},
+		}
+	})
 
 	return httptest.NewServer(router)
 }

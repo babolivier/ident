@@ -24,7 +24,7 @@ func TestInsertInvite(t *testing.T) {
 	err = db.Save3PIDInvite(in)
 	require.Nil(t, err, err)
 
-	out, err := db.invites.selectInviteFromToken(in.Token)
+	out, err := db.invites.selectInviteByToken(in.Token)
 	require.Nil(t, err, err)
 
 	require.Equal(t, in.Token, out.Token)

@@ -11,7 +11,7 @@ Its aim is to be a full implementation of the [identity server specification](ht
 * [x] [Status check](https://matrix.org/docs/spec/identity_service/r0.2.1#status-check)
 * [x] [Key management](https://matrix.org/docs/spec/identity_service/r0.2.1#key-management)
 * [x] [Invitation storage](https://matrix.org/docs/spec/identity_service/r0.2.1#invitation-storage)
-* [ ] [Ephemeral invitation signing](https://matrix.org/docs/spec/identity_service/r0.2.1#ephemeral-invitation-signing)
+* [x] [Ephemeral invitation signing](https://matrix.org/docs/spec/identity_service/r0.2.1#ephemeral-invitation-signing)
 * [ ] [Association creation](https://matrix.org/docs/spec/identity_service/r0.2.1#establishing-associations)
 * [ ] [Association deletion](https://matrix.org/docs/spec/identity_service/r0.2.1#post-matrix-identity-api-v1-3pid-unbind)
 * [ ] [Association lookup](https://matrix.org/docs/spec/identity_service/r0.2.1#association-lookup)

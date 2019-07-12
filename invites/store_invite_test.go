@@ -23,7 +23,7 @@ func TestCheckReqValid(t *testing.T) {
 		},
 	}
 
-	resp := checkReq(req)
+	resp := checkStoreInviteReq(req)
 	require.Nil(t, resp)
 }
 
@@ -37,7 +37,7 @@ func TestCheckReqUnsupportedMedium(t *testing.T) {
 		},
 	}
 
-	resp := checkReq(req)
+	resp := checkStoreInviteReq(req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.True(t, strings.HasSuffix(resp.JSON.(gomatrix.RespError).Err, constants.MediumMSISDN))
@@ -53,13 +53,13 @@ func TestCheckReqBadEmail(t *testing.T) {
 		},
 	}
 
-	resp := checkReq(req)
+	resp := checkStoreInviteReq(req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_EMAIL", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid email address", resp.JSON.(gomatrix.RespError).Err)
 
 	req.Address = "test@example.com@otherdomain.com"
-	resp = checkReq(req)
+	resp = checkStoreInviteReq(req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_EMAIL", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid email address", resp.JSON.(gomatrix.RespError).Err)
@@ -75,13 +75,13 @@ func TestCheckReqBadRoomID(t *testing.T) {
 		},
 	}
 
-	resp := checkReq(req)
+	resp := checkStoreInviteReq(req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid room ID", resp.JSON.(gomatrix.RespError).Err)
 
 	req.RoomID = "!someroomexample.com"
-	resp = checkReq(req)
+	resp = checkStoreInviteReq(req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid room ID", resp.JSON.(gomatrix.RespError).Err)
@@ -97,13 +97,13 @@ func TestCheckReqBadSender(t *testing.T) {
 		},
 	}
 
-	resp := checkReq(&req)
+	resp := checkStoreInviteReq(&req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid sender ID", resp.JSON.(gomatrix.RespError).Err)
 
 	req.Sender = "@aliceexample.com"
-	resp = checkReq(&req)
+	resp = checkStoreInviteReq(&req)
 	require.NotNil(t, resp)
 	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid sender ID", resp.JSON.(gomatrix.RespError).Err)
@@ -127,7 +127,7 @@ func TestGetResp(t *testing.T) {
 
 	pubKey := "somekey"
 
-	resp := getResp(req, cfg, pubKey)
+	resp := getStoreInviteResp(req, cfg, pubKey)
 	require.NotNil(t, resp)
 	require.Equal(t, req.Token, resp.Token)
 	require.Equal(t, cfg.Ident.SigningKey.PubKeyBase64, resp.PublicKey)
