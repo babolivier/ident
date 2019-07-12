@@ -19,7 +19,6 @@ import (
 )
 
 var testConfig *config.Config
-var testDB *database.Database
 
 func NewTestConfig(t *testing.T) *config.Config {
 	if testConfig != nil {
@@ -37,17 +36,8 @@ func NewTestDB(t *testing.T) *database.Database {
 	cfg := NewTestConfig(t)
 	db, err := database.NewDatabase(cfg.Database.Driver, cfg.Database.ConnString)
 	require.Nil(t, err, err)
+
 	return db
-}
-
-func InitTestRouting(
-	t *testing.T, setupRouting func(*mux.Router, *config.Config, *database.Database),
-) (cfg *config.Config, db *database.Database, s *httptest.Server, err error) {
-	cfg = NewTestConfig(t)
-	db = NewTestDB(t)
-
-	s = NewTestServer(cfg, db, setupRouting)
-	return
 }
 
 func NewTestServer(
@@ -69,6 +59,20 @@ func NewTestServer(
 	})
 
 	return httptest.NewServer(router)
+}
+
+func TestWithTestServer(
+	t *testing.T,
+	testFunc func(t *testing.T, cfg *config.Config, db *database.Database, s *httptest.Server),
+	setupRouting func(*mux.Router, *config.Config, *database.Database),
+) {
+	cfg := NewTestConfig(t)
+	db := NewTestDB(t)
+	s := NewTestServer(cfg, db, setupRouting)
+
+	defer s.Close()
+
+	testFunc(t, cfg, db, s)
 }
 
 func TestWithTmpFiles(t *testing.T, testFunc func(t *testing.T), files map[string]string) {

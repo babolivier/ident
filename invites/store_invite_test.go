@@ -39,7 +39,7 @@ func TestCheckReqUnsupportedMedium(t *testing.T) {
 
 	resp := checkStoreInviteReq(req)
 	require.NotNil(t, resp)
-	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
+	require.Equal(t, "M_INVALID_PARAM", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.True(t, strings.HasSuffix(resp.JSON.(gomatrix.RespError).Err, constants.MediumMSISDN))
 }
 
@@ -77,13 +77,13 @@ func TestCheckReqBadRoomID(t *testing.T) {
 
 	resp := checkStoreInviteReq(req)
 	require.NotNil(t, resp)
-	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
+	require.Equal(t, "M_INVALID_PARAM", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid room ID", resp.JSON.(gomatrix.RespError).Err)
 
 	req.RoomID = "!someroomexample.com"
 	resp = checkStoreInviteReq(req)
 	require.NotNil(t, resp)
-	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
+	require.Equal(t, "M_INVALID_PARAM", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid room ID", resp.JSON.(gomatrix.RespError).Err)
 }
 
@@ -99,13 +99,13 @@ func TestCheckReqBadSender(t *testing.T) {
 
 	resp := checkStoreInviteReq(&req)
 	require.NotNil(t, resp)
-	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
+	require.Equal(t, "M_INVALID_PARAM", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid sender ID", resp.JSON.(gomatrix.RespError).Err)
 
 	req.Sender = "@aliceexample.com"
 	resp = checkStoreInviteReq(&req)
 	require.NotNil(t, resp)
-	require.Equal(t, "M_INVALID_PARAMS", resp.JSON.(gomatrix.RespError).ErrCode)
+	require.Equal(t, "M_INVALID_PARAM", resp.JSON.(gomatrix.RespError).ErrCode)
 	require.Equal(t, "Invalid sender ID", resp.JSON.(gomatrix.RespError).Err)
 }
 

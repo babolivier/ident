@@ -4,21 +4,24 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"golang.org/x/crypto/ed25519"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"path"
 	"strings"
 	"testing"
 
+	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/constants"
+	"github.com/babolivier/ident/common/database"
 	"github.com/babolivier/ident/common/testutils"
 	"github.com/babolivier/ident/common/types"
 
 	"github.com/matrix-org/gomatrix"
 	"github.com/matrix-org/gomatrixserverlib"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/ed25519"
 )
 
 // TODO: Add a test for "/store-invite". This requires a way to setup a mocked SMTP server (or a real one) in the CI,
@@ -26,11 +29,10 @@ import (
 //  if no SMTP configuration is provided.
 
 func TestSignED25519(t *testing.T) {
-	cfg, db, s, err := testutils.InitTestRouting(t, SetupRouting)
-	require.Nil(t, err, err)
+	testutils.TestWithTestServer(t, testSignED25519, SetupRouting)
+}
 
-	defer s.Close()
-
+func testSignED25519(t *testing.T, cfg *config.Config, db *database.Database, s *httptest.Server) {
 	url := s.URL + path.Join(constants.APIPrefix, "sign-ed25519")
 	contentType := "application/json"
 

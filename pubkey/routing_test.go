@@ -4,27 +4,26 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"path"
 	"testing"
 
 	"github.com/babolivier/ident/common/config"
 	"github.com/babolivier/ident/common/constants"
+	"github.com/babolivier/ident/common/database"
 	"github.com/babolivier/ident/common/testutils"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetPubKey(t *testing.T) {
-	cfg, _, s, err := testutils.InitTestRouting(t, SetupRouting)
-	require.Nil(t, err, err)
-
-	defer s.Close()
-
-	realKeyID := cfg.Ident.SigningKey.Algo + ":" + cfg.Ident.SigningKey.ID
-	testGetPubKey(t, s.URL, realKeyID, cfg, http.StatusOK)
-	testGetPubKey(t, s.URL, "abcdef", cfg, http.StatusNotFound)
-	testGetPubKey(t, s.URL, "abc:def", cfg, http.StatusNotFound)
+	testutils.TestWithTestServer(t, func(t *testing.T, cfg *config.Config, db *database.Database, s *httptest.Server) {
+		realKeyID := cfg.Ident.SigningKey.Algo + ":" + cfg.Ident.SigningKey.ID
+		testGetPubKey(t, s.URL, realKeyID, cfg, http.StatusOK)
+		testGetPubKey(t, s.URL, "abcdef", cfg, http.StatusNotFound)
+		testGetPubKey(t, s.URL, "abc:def", cfg, http.StatusNotFound)
+	}, SetupRouting)
 }
 
 func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, expectedCode int) {
@@ -51,28 +50,22 @@ func testGetPubKey(t *testing.T, serverURL, keyID string, cfg *config.Config, ex
 }
 
 func TestPubKeyIsValid(t *testing.T) {
-	cfg, _, s, err := testutils.InitTestRouting(t, SetupRouting)
-	require.Nil(t, err, err)
-
-	defer s.Close()
-
-	realB64 := cfg.Ident.SigningKey.PubKeyBase64
-	testPubKeyIsValid(t, s.URL, realB64, false, true)
-	testPubKeyIsValid(t, s.URL, "abcdef", false, false)
+	testutils.TestWithTestServer(t, func(t *testing.T, cfg *config.Config, db *database.Database, s *httptest.Server) {
+		realB64 := cfg.Ident.SigningKey.PubKeyBase64
+		testPubKeyIsValid(t, s.URL, realB64, false, true)
+		testPubKeyIsValid(t, s.URL, "abcdef", false, false)
+	}, SetupRouting)
 }
 
 func TestPubKeyEphemeralIsValid(t *testing.T) {
-	_, db, s, err := testutils.InitTestRouting(t, SetupRouting)
-	require.Nil(t, err, err)
+	testutils.TestWithTestServer(t, func(t *testing.T, cfg *config.Config, db *database.Database, s *httptest.Server) {
+		realPubKey := "somekey"
+		err := db.SaveEphemeralPublicKey(realPubKey)
+		require.Nil(t, err, err)
 
-	defer s.Close()
-
-	realPubKey := "somekey"
-	err = db.SaveEphemeralPublicKey(realPubKey)
-	require.Nil(t, err, err)
-
-	testPubKeyIsValid(t, s.URL, realPubKey, true, true)
-	testPubKeyIsValid(t, s.URL, "abcdef", true, false)
+		testPubKeyIsValid(t, s.URL, realPubKey, true, true)
+		testPubKeyIsValid(t, s.URL, "abcdef", true, false)
+	}, SetupRouting)
 }
 
 func testPubKeyIsValid(t *testing.T, serverURL, b64 string, ephemeral, expected bool) {
