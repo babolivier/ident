@@ -80,9 +80,10 @@ func SignED25519(r *http.Request, cfg *config.Config, db *database.Database) uti
 		return common.InternalServerError(err)
 	}
 
-	// Using ed25519:0 as the key ID here isn't part of the spec (yet), however discussion in #matrix-spec concluded
-	// that the ID used here is of little importance, that the implementation is free to use whichever it wants, and
-	// that "ed25519:0" is a good default value.
+	// Using ed25519:0 as the key ID here isn't part of the spec (yet), however
+	// https://github.com/matrix-org/matrix-doc/issues/2170 says that the ID used
+	// here is of little importance, that the implementation is free to use
+	// whichever it wants, and that "ed25519:0" is a good default value.
 	signedRespBytes, err := gomatrixserverlib.SignJSON(
 		cfg.Ident.ServerName,
 		gomatrixserverlib.KeyID("ed25519:0"),
